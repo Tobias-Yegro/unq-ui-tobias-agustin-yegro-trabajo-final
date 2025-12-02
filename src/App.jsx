@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
+import DifficultySelector from './components/DifficultySelector';
 
 function App() {
   const [difficulties, setDifficulties] = useState([]);
@@ -84,19 +85,10 @@ function App() {
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {!selectedDifficulty && (
-        <div>
-          <h2>Elegí una dificultad:</h2>
-
-          {difficulties.map((d) => (
-            <button
-              key={d}
-              onClick={() => handleSelectDifficulty(d)}
-              style={{ marginRight: 10, marginBottom: 10 }}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
+        <DifficultySelector
+          difficulties={difficulties}
+          onSelect={handleSelectDifficulty}
+        />
       )}
 
       {selectedDifficulty && !gameFinished && questions.length > 0 && (
