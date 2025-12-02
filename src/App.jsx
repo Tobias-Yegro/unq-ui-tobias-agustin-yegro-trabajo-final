@@ -1,35 +1,159 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [difficulties, setDifficulties] = useState([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState(null);
+
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  const [feedback, setFeedback] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [gameFinished, setGameFinished] = useState(false);
+
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchDifficulties()
+      .then((data) => {
+        setDifficulties(data);
+      })
+      .catch(() => {
+        setError('Error al cargar las dificultades');
+      });
+  }, []);
+
+  // Elegir dificultad
+  const handleSelectDifficulty = async (difficulty) => {
+    setSelectedDifficulty(difficulty);
+    setError(null);
+    setGameFinished(false);
+    setFeedback(null);
+    setCorrectCount(0);
+    setCurrentQuestionIndex(0);
+
+    try {
+      const data = await fetchQuestions(difficulty);
+      setQuestions(data);
+    } catch (err) {
+      setError('Error al cargar las preguntas');
+    }
+  };
+
+  // Contestar pregunta
+  const handleAnswer = async (optionKey) => {
+    const question = questions[currentQuestionIndex];
+
+    try {
+      const result = await postAnswer({
+        questionId: question.id,
+        option: optionKey,
+      });
+
+      const isCorrect = result.answer === true;
+
+      if (isCorrect) {
+        setCorrectCount((prev) => prev + 1);
+        setFeedback("correct");
+      } else {
+        setFeedback("incorrect");
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Error al enviar la respuesta');
+    }
+  };
+
+  // Siguiente pregunta
+  const handleNext = () => {
+    const nextIndex = currentQuestionIndex + 1;
+
+    if (nextIndex < questions.length) {
+      setCurrentQuestionIndex(nextIndex);
+      setFeedback(null);
+    } else {
+      setGameFinished(true);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: 20, fontFamily: "Arial" }}>
+      <h1>Preguntados</h1>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {!selectedDifficulty && (
+        <div>
+          <h2>Elegí una dificultad:</h2>
+
+          {difficulties.map((d) => (
+            <button
+              key={d}
+              onClick={() => handleSelectDifficulty(d)}
+              style={{ marginRight: 10, marginBottom: 10 }}
+            >
+              {d}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {selectedDifficulty && !gameFinished && questions.length > 0 && (
+        <div>
+          <h2>
+            Pregunta {currentQuestionIndex + 1} de {questions.length}
+          </h2>
+
+          <p>{questions[currentQuestionIndex].text}</p>
+
+          <div style={{ marginBottom: 20 }}>
+            {questions[currentQuestionIndex].options.map((op) => (
+              <button
+                key={op.key}
+                onClick={() => handleAnswer(op.key)}
+                style={{
+                  display: "block",
+                  margin: "8px 0",
+                  padding: "8px 12px",
+                }}
+                disabled={feedback !== null}
+              >
+                {op.text}
+              </button>
+            ))}
+          </div>
+
+          {feedback === "correct" && (
+            <p style={{ color: "green" }}>¡Correcto!</p>
+          )}
+          {feedback === "incorrect" && (
+            <p style={{ color: "red" }}>Incorrecto</p>
+          )}
+
+          {feedback && (
+            <button onClick={handleNext} style={{ marginTop: 10 }}>
+              Siguiente
+            </button>
+          )}
+        </div>
+      )}
+
+
+      {gameFinished && (
+        <div>
+          <h2>Juego terminado</h2>
+          <p>
+            Respuestas correctas: {correctCount} / {questions.length}
+          </p>
+
+          <button onClick={() => setSelectedDifficulty(null)}>
+            Volver a jugar
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
