@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
 import DifficultySelector from './components/DifficultySelector';
 import QuestionCard from './components/QuestionCard';
+import ResultScreen from "./components/ResultScreen";
+
 
 function App() {
   const [difficulties, setDifficulties] = useState([]);
@@ -70,6 +72,16 @@ function App() {
     }
   };
 
+  const handleRestart = () => {
+    setSelectedDifficulty(null);
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setFeedback(null);
+    setCorrectCount(0);
+    setGameFinished(false);
+    setError(null);
+  }
+
   return (
     <div style={{ padding: 20, fontFamily: "Arial" }}>
       <h1>Preguntados</h1>
@@ -95,16 +107,11 @@ function App() {
       )}
 
       {gameFinished && (
-        <div>
-          <h2>Juego terminado</h2>
-          <p>
-            Respuestas correctas: {correctCount} / {questions.length}
-          </p>
-
-          <button onClick={() => setSelectedDifficulty(null)}>
-            Volver a jugar
-          </button>
-        </div>
+        <ResultScreen
+          correctCount={correctCount}
+          totalQuestions={questions.length}
+          onRestart={handleRestart}
+        />
       )}
     </div>
   );
