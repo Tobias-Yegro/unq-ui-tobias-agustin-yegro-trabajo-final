@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
 import DifficultySelector from './components/DifficultySelector';
+import QuestionCard from './components/QuestionCard';
 
 function App() {
   const [difficulties, setDifficulties] = useState([]);
@@ -17,15 +18,10 @@ function App() {
 
   useEffect(() => {
     fetchDifficulties()
-      .then((data) => {
-        setDifficulties(data);
-      })
-      .catch(() => {
-        setError('Error al cargar las dificultades');
-      });
+      .then((data) => setDifficulties(data))
+      .catch(() => setError('Error al cargar las dificultades'));
   }, []);
 
-  // Elegir dificultad
   const handleSelectDifficulty = async (difficulty) => {
     setSelectedDifficulty(difficulty);
     setError(null);
@@ -42,7 +38,6 @@ function App() {
     }
   };
 
-  // Contestar pregunta
   const handleAnswer = async (optionKey) => {
     const question = questions[currentQuestionIndex];
 
@@ -52,9 +47,7 @@ function App() {
         option: optionKey,
       });
 
-      const isCorrect = result.answer === true;
-
-      if (isCorrect) {
+      if (result.answer === true) {
         setCorrectCount((prev) => prev + 1);
         setFeedback("correct");
       } else {
@@ -66,7 +59,6 @@ function App() {
     }
   };
 
-  // Siguiente pregunta
   const handleNext = () => {
     const nextIndex = currentQuestionIndex + 1;
 
@@ -92,45 +84,15 @@ function App() {
       )}
 
       {selectedDifficulty && !gameFinished && questions.length > 0 && (
-        <div>
-          <h2>
-            Pregunta {currentQuestionIndex + 1} de {questions.length}
-          </h2>
-
-          <p>{questions[currentQuestionIndex].text}</p>
-
-          <div style={{ marginBottom: 20 }}>
-            {questions[currentQuestionIndex].options.map((op) => (
-              <button
-                key={op.key}
-                onClick={() => handleAnswer(op.key)}
-                style={{
-                  display: "block",
-                  margin: "8px 0",
-                  padding: "8px 12px",
-                }}
-                disabled={feedback !== null}
-              >
-                {op.text}
-              </button>
-            ))}
-          </div>
-
-          {feedback === "correct" && (
-            <p style={{ color: "green" }}>¡Correcto!</p>
-          )}
-          {feedback === "incorrect" && (
-            <p style={{ color: "red" }}>Incorrecto</p>
-          )}
-
-          {feedback && (
-            <button onClick={handleNext} style={{ marginTop: 10 }}>
-              Siguiente
-            </button>
-          )}
-        </div>
+        <QuestionCard
+          question={questions[currentQuestionIndex]}
+          currentIndex={currentQuestionIndex}
+          totalQuestions={questions.length}
+          feedback={feedback}
+          onAnswer={handleAnswer}
+          onNext={handleNext}
+        />
       )}
-
 
       {gameFinished && (
         <div>
