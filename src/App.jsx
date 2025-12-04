@@ -14,6 +14,7 @@ function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const [feedback, setFeedback] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
 
@@ -42,6 +43,7 @@ function App() {
   };
 
   const handleAnswer = async (optionKey) => {
+    setSelectedOption(optionKey);
     const question = questions[currentQuestionIndex];
 
     try {
@@ -68,6 +70,7 @@ function App() {
     if (nextIndex < questions.length) {
       setCurrentQuestionIndex(nextIndex);
       setFeedback(null);
+      setSelectedOption(null);
     } else {
       setGameFinished(true);
     }
@@ -78,6 +81,7 @@ function App() {
     setQuestions([]);
     setCurrentQuestionIndex(0);
     setFeedback(null);
+    setSelectedOption(null);
     setCorrectCount(0);
     setGameFinished(false);
     setError(null);
@@ -103,6 +107,7 @@ function App() {
           currentIndex={currentQuestionIndex}
           totalQuestions={questions.length}
           feedback={feedback}
+          selectedOption={selectedOption}
           onAnswer={handleAnswer}
           onNext={handleNext}
         />

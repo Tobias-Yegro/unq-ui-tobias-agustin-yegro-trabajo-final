@@ -58,3 +58,47 @@
 .next-button:hover {
   background-color: #bfbfbf;
 }
+
+.correct-button {
+  background-color: #4cd964 !important;
+  border-color: #2ebf4f !important;
+  color: white;
+  font-weight: bold;
+}
+
+
+.incorrect-button {
+  background-color: #ff3b30 !important;
+  border-color: #cc2d25 !important;
+  color: white;
+  font-weight: bold;
+}
+
+.feedback-banner {
+  margin-top: 15px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  animation: pop-in 0.4s ease forwards;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.correct-banner {
+  background-color: #4cd964;
+  color: white;
+}
+
+.incorrect-banner {
+  background-color: #ff3b30;
+  color: white;
+}
+
+@keyframes pop-in {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
