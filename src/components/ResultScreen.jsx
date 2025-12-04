@@ -1,17 +1,19 @@
+import "../styles/ResultScreen.css";
+
 function ResultScreen({ correctCount, totalQuestions, onRestart }) {
-  return (
-    <div>
-      <h2>Juego terminado</h2>
+    return (
+        <div className="result-container">
+            <h2>Juego terminado</h2>
 
-      <p>
-        Respuestas correctas: {correctCount} / {totalQuestions}
-      </p>
+            <p className="result-text">
+                Respuestas correctas: {correctCount} / {totalQuestions}
+            </p>
 
-      <button onClick={onRestart}>
-        Volver a jugar
-      </button>
-    </div>
-  );
+            <button onClick={onRestart} className="restart-button">
+                Volver a jugar
+            </button>
+        </div>
+    );
 }
 
 export default ResultScreen;

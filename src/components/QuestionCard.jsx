@@ -1,3 +1,5 @@
+import "../styles/QuestionCard.css";
+
 function QuestionCard({
     question,
     currentIndex,
@@ -7,30 +9,31 @@ function QuestionCard({
     onNext
 }) {
     return (
-        <div>
+        <div className="question-card">
             <h2>
                 Pregunta {currentIndex + 1} de {totalQuestions}
             </h2>
 
-            <p>{question.text}</p>
+            <p className="question-text">{question.text}</p>
 
-            <div>
+            <div className="options-container">
                 {question.options.map((op) => (
                     <button
                         key={op.key}
                         onClick={() => onAnswer(op.key)}
                         disabled={feedback !== null}
+                        className="option-button"
                     >
                         {op.text}
                     </button>
                 ))}
             </div>
 
-            {feedback === "correct" && <p>¡Correcto!</p>}
-            {feedback === "incorrect" && <p>Incorrecto</p>}
+            {feedback === "correct" && <p className="correct-text">¡Correcto!</p>}
+            {feedback === "incorrect" && <p className="incorrect-text">Incorrecto</p>}
 
             {feedback && (
-                <button onClick={onNext}>
+                <button onClick={onNext} className="next-button">
                     Siguiente
                 </button>
             )}

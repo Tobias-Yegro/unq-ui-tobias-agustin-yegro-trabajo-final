@@ -1,0 +1,13 @@
+.result-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.restart-button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #333;
+  border-radius: 6px;
+}

@@ -3,6 +3,7 @@ import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
 import DifficultySelector from './components/DifficultySelector';
 import QuestionCard from './components/QuestionCard';
 import ResultScreen from "./components/ResultScreen";
+import './styles/App.css';
 
 
 function App() {
@@ -83,10 +84,11 @@ function App() {
   }
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
+    <div className="app-container">
+
       <h1>Preguntados</h1>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
 
       {!selectedDifficulty && (
         <DifficultySelector
