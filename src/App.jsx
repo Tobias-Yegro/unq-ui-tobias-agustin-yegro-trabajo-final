@@ -4,6 +4,7 @@ import DifficultySelector from './components/DifficultySelector';
 import QuestionCard from './components/QuestionCard';
 import ResultScreen from "./components/ResultScreen";
 import './styles/App.css';
+import colorBar from "./assets/colorbar.png";
 
 
 function App() {
@@ -87,41 +88,56 @@ function App() {
     setError(null);
   }
 
-  return (
-    <div className="app-container">
+return (
+  <div className="app-page">
 
-      <h1>Preguntados</h1>
+    <div className="side-area"></div>
 
-      {error && <p className="error-text">{error}</p>}
+    <div className="center-area">
 
-      {!selectedDifficulty && (
-        <DifficultySelector
-          difficulties={difficulties}
-          onSelect={handleSelectDifficulty}
-        />
-      )}
+      <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
 
-      {selectedDifficulty && !gameFinished && questions.length > 0 && (
-        <QuestionCard
-          question={questions[currentQuestionIndex]}
-          currentIndex={currentQuestionIndex}
-          totalQuestions={questions.length}
-          feedback={feedback}
-          selectedOption={selectedOption}
-          onAnswer={handleAnswer}
-          onNext={handleNext}
-        />
-      )}
+      <div className="content">
+        <h1 className="title">PREGUNTADOS</h1>
 
-      {gameFinished && (
-        <ResultScreen
-          correctCount={correctCount}
-          totalQuestions={questions.length}
-          onRestart={handleRestart}
-        />
-      )}
+        {error && <p className="error-text">{error}</p>}
+
+        {!selectedDifficulty && (
+          <DifficultySelector
+            difficulties={difficulties}
+            onSelect={handleSelectDifficulty}
+          />
+        )}
+
+        {selectedDifficulty && !gameFinished && questions.length > 0 && (
+          <QuestionCard
+            question={questions[currentQuestionIndex]}
+            currentIndex={currentQuestionIndex}
+            totalQuestions={questions.length}
+            feedback={feedback}
+            selectedOption={selectedOption}
+            onAnswer={handleAnswer}
+            onNext={handleNext}
+          />
+        )}
+
+        {gameFinished && (
+          <ResultScreen
+            correctCount={correctCount}
+            totalQuestions={questions.length}
+            onRestart={handleRestart}
+          />
+        )}
+      </div>
+
+      <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
+
     </div>
-  );
+
+    <div className="side-area"></div>
+
+  </div>
+);
 }
 
-export default App;
+  export default App;

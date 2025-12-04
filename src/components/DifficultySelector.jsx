@@ -2,18 +2,20 @@ import "../styles/DifficultySelector.css";
 
 function DifficultySelector({ difficulties, onSelect }) {
     return (
-        <div>
-            <h2>Elegí una dificultad:</h2>
+        <div className="difficulty-container">
+            <h2 className="subtitle">Elegí una dificultad:</h2>
 
-            {difficulties.map((difficulty) => (
-                <button
-                    key={difficulty}
-                    onClick={() => onSelect(difficulty)}
-                    className="difficulty-button"
-                >
-                    {difficulty}
-                </button>
-            ))}
+            <div className="difficulty-buttons">
+                {difficulties.map((difficulty) => (
+                    <button
+                        key={difficulty}
+                        onClick={() => onSelect(difficulty)}
+                        className={`difficulty-button difficulty-${difficulty}`}
+                    >
+                        {difficulty}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 }
