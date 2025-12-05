@@ -92,7 +92,6 @@ const handleAnswer = async (optionKey) => {
 
   return (
     <div className="app-page">
-
       <div className="side-area"></div>
 
       <div className="center-area">
@@ -101,6 +100,7 @@ const handleAnswer = async (optionKey) => {
 
         <div className="content">
           <h1 className="title">Trivia Crack</h1>
+          <div className="title-divider"></div>
 
           {error && <p className="error-text">{error}</p>}
 
@@ -133,11 +133,9 @@ const handleAnswer = async (optionKey) => {
         </div>
 
         <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
-
       </div>
 
       <div className="side-area"></div>
-
     </div>
   );
 }

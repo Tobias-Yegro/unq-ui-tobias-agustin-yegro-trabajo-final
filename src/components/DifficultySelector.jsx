@@ -1,4 +1,5 @@
 import "../styles/DifficultySelector.css";
+import greenWork from "../assets/characters/GreenWork.gif";
 
 function DifficultySelector({ difficulties, onSelect }) {
     return (
@@ -16,6 +17,12 @@ function DifficultySelector({ difficulties, onSelect }) {
                     </button>
                 ))}
             </div>
+
+            <img 
+              src={greenWork} 
+              alt="character animation" 
+              className="difficulty-character"
+            />
         </div>
     );
 }
