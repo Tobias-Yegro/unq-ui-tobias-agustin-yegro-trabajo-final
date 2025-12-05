@@ -1,13 +1,49 @@
 .result-container {
-  text-align: center;
-  margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.result-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: rgba(221, 214, 214, 0.995);
+    margin-bottom: 10px;
+}
+
+.result-text {
+    font-size: 1.2rem;
+    color: rgba(221, 214, 214, 0.995);
+    margin-bottom: 20px;
 }
 
 .restart-button {
-  margin-top: 20px;
-  padding: 10px 15px;
-  cursor: pointer;
-  background-color: #f0f0f0;
-  border: 1px solid #333;
-  border-radius: 6px;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    animation: colorCycle 3s linear infinite;
+    transition: transform 0.2s ease;
+}
+
+.restart-button:hover {
+    transform: scale(1.08);
+}
+
+@keyframes colorCycle {
+    0%   { background-color: #f9d71c; } 
+    16%  { background-color: #f99e1c; } 
+    32%  { background-color: #e43f3f; }
+    48%  { background-color: #cc2dcf; } 
+    64%  { background-color: #3e4ae6; } 
+    80%  { background-color: #2ecc71; } 
+    100% { background-color: #f9d71c; } 
+}
+
+.restart-button:hover {
+    transform: scale(1.05);
 }

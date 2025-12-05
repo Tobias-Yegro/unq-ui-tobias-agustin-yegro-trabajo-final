@@ -1,10 +1,28 @@
 .question-card {
-  margin-top: 20px;
+  width: 85%;
+  margin: 0 auto;
+  position: relative;
+}
+
+
+.question-box {
+  background: white;
+  padding: 18px 22px;
+  border-radius: 14px;
+  width: 90%;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .question-text {
+  color: #3b0057; 
   font-size: 18px;
-  margin-bottom: 15px;
+  font-weight: 500;
+  margin: 0;
 }
 
 .options-container {
@@ -14,13 +32,13 @@
 }
 
 .option-button {
-  padding: 10px 15px;
-  cursor: pointer;
-  border: 1px solid #333;
-  border-radius: 6px;
-  background-color: #fafafa;
-  text-align: left;
-  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 10px;
+  height: 52px; 
+  overflow: hidden;
 }
 
 .option-button:hover:not(:disabled) {
@@ -64,8 +82,13 @@
   border-color: #2ebf4f !important;
   color: white;
   font-weight: bold;
+  animation: correctFlash 1s ease;
 }
 
+@keyframes correctFlash {
+  from { transform: scale(1); }
+  to   { transform: scale(1.05); }
+}
 
 .incorrect-button {
   background-color: #ff3b30 !important;
@@ -96,9 +119,104 @@
   color: white;
 }
 
+.option-text {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.option-icon {
+  height: 45px;
+  width: auto;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
 @keyframes pop-in {
   to {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.question-counter {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+
+  text-align: center;
+  padding: 4px 14px;
+
+  display: inline-block;
+  margin: 0 auto;
+
+  border: 3px solid transparent;
+  border-radius: 10px;
+
+  background: linear-gradient(#200034, #200034) padding-box,
+              linear-gradient(
+                90deg,
+                red,
+                yellow,
+                green,
+                cyan,
+                blue,
+                red
+              ) border-box;
+  
+  background-size: 100%, 300%;
+  animation: rgbBorder 3s linear infinite;
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0, 0%; }
+  100% { background-position: 0, 300%; }
+}
+
+.counter-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 120px;
+}
+
+.timer-bar {
+  width: 100%;
+  height: 14px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 10px;
+  margin: 25px auto 10px auto;
+  overflow: hidden;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.timer-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff95, #ffea00, #ff4d4d);
+  width: 100%;
+  animation: timerDeplete 15s linear forwards;
+}
+
+@keyframes timerDeplete {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.counter-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 35px;
+}
+
+.shake {
+  animation: shakeAnim 0.5s ease;
+}
+
+@keyframes shakeAnim {
+  0% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-6px); }
+  60% { transform: translateX(6px); }
+  75% { transform: translateX(-3px); }
+  90% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
 }

@@ -3,14 +3,14 @@ import "../styles/ResultScreen.css";
 function ResultScreen({ correctCount, totalQuestions, onRestart }) {
     return (
         <div className="result-container">
-            <h2>Juego terminado</h2>
+            <h2 className="result-title">Game finished</h2>
 
             <p className="result-text">
-                Respuestas correctas: {correctCount} / {totalQuestions}
+                Correct answers: {correctCount} / {totalQuestions}
             </p>
 
             <button onClick={onRestart} className="restart-button">
-                Volver a jugar
+                Play again! 
             </button>
         </div>
     );

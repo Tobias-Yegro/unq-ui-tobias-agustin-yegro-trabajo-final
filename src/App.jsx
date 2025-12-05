@@ -43,27 +43,29 @@ function App() {
     }
   };
 
-  const handleAnswer = async (optionKey) => {
-    setSelectedOption(optionKey);
-    const question = questions[currentQuestionIndex];
+const handleAnswer = async (optionKey) => {
+  setSelectedOption(optionKey);
+  const question = questions[currentQuestionIndex];
 
-    try {
-      const result = await postAnswer({
-        questionId: question.id,
-        option: optionKey,
-      });
+  try {
+    const result = await postAnswer({
+      questionId: question.id,
+      option: optionKey,
+    });
 
-      if (result.answer === true) {
-        setCorrectCount((prev) => prev + 1);
-        setFeedback("correct");
-      } else {
-        setFeedback("incorrect");
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Error al enviar la respuesta');
+    if (result.answer === true) {
+      setCorrectCount(prev => prev + 1);
+      setFeedback("correct");
+    } else {
+      setFeedback("incorrect");
+      window.dispatchEvent(new Event("shake-screen"));
     }
-  };
+    
+  } catch (err) {
+    console.error(err);
+    setError('Error al enviar la respuesta');
+  }
+};
 
   const handleNext = () => {
     const nextIndex = currentQuestionIndex + 1;
@@ -88,56 +90,56 @@ function App() {
     setError(null);
   }
 
-return (
-  <div className="app-page">
+  return (
+    <div className="app-page">
 
-    <div className="side-area"></div>
+      <div className="side-area"></div>
 
-    <div className="center-area">
+      <div className="center-area">
 
-      <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
+        <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
 
-      <div className="content">
-        <h1 className="title">PREGUNTADOS</h1>
+        <div className="content">
+          <h1 className="title">Trivia Crack</h1>
 
-        {error && <p className="error-text">{error}</p>}
+          {error && <p className="error-text">{error}</p>}
 
-        {!selectedDifficulty && (
-          <DifficultySelector
-            difficulties={difficulties}
-            onSelect={handleSelectDifficulty}
-          />
-        )}
+          {!selectedDifficulty && (
+            <DifficultySelector
+              difficulties={difficulties}
+              onSelect={handleSelectDifficulty}
+            />
+          )}
 
-        {selectedDifficulty && !gameFinished && questions.length > 0 && (
-          <QuestionCard
-            question={questions[currentQuestionIndex]}
-            currentIndex={currentQuestionIndex}
-            totalQuestions={questions.length}
-            feedback={feedback}
-            selectedOption={selectedOption}
-            onAnswer={handleAnswer}
-            onNext={handleNext}
-          />
-        )}
+          {selectedDifficulty && !gameFinished && questions.length > 0 && (
+            <QuestionCard
+              question={questions[currentQuestionIndex]}
+              currentIndex={currentQuestionIndex}
+              totalQuestions={questions.length}
+              feedback={feedback}
+              selectedOption={selectedOption}
+              onAnswer={handleAnswer}
+              onNext={handleNext}
+            />
+          )}
 
-        {gameFinished && (
-          <ResultScreen
-            correctCount={correctCount}
-            totalQuestions={questions.length}
-            onRestart={handleRestart}
-          />
-        )}
+          {gameFinished && (
+            <ResultScreen
+              correctCount={correctCount}
+              totalQuestions={questions.length}
+              onRestart={handleRestart}
+            />
+          )}
+        </div>
+
+        <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
+
       </div>
 
-      <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
+      <div className="side-area"></div>
 
     </div>
-
-    <div className="side-area"></div>
-
-  </div>
-);
+  );
 }
 
-  export default App;
+export default App;
