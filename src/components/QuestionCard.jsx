@@ -24,7 +24,6 @@ function QuestionCard({
 
   useEffect(() => {
     const triggerShake = () => setShake(true);
-  
     window.addEventListener("shake-screen", triggerShake);
     return () => window.removeEventListener("shake-screen", triggerShake);
   }, []);
@@ -43,34 +42,32 @@ function QuestionCard({
     card.addEventListener("animationend", handleEnd);
     return () => card.removeEventListener("animationend", handleEnd);
 
-  }, [shake]);
+  }, [shake, onNext]);
 
   useEffect(() => {
     const bar = timerRef.current;
     if (!bar) return;
 
     const handleTimerEnd = () => {
-      setShake(true); 
+      if (selectedOption === null) {
+        setShake(true);
+      }
     };
 
     bar.addEventListener("animationend", handleTimerEnd);
     return () => bar.removeEventListener("animationend", handleTimerEnd);
 
-  }, [currentIndex]);
+  }, [currentIndex, selectedOption]);
 
   useEffect(() => {
-    if (feedback !== "correct") return;
+    if (feedback === "correct") {
+      const timeout = setTimeout(() => {
+        onNext();
+      }, 550); 
 
-    const card = cardRef.current;
-    if (!card) return;
-
-    const handleCorrectEnd = () => onNext();
-
-    card.addEventListener("animationend", handleCorrectEnd);
-
-    return () => card.removeEventListener("animationend", handleCorrectEnd);
-
-  }, [feedback]);
+      return () => clearTimeout(timeout);
+    }
+  }, [feedback, onNext]);
 
   return (
     <div ref={cardRef} className={`question-card ${shake ? "shake" : ""}`}>
@@ -84,14 +81,18 @@ function QuestionCard({
           const isSelected = selectedOption === op.key;
           const isCorrect = feedback === "correct" && isSelected;
           const isIncorrect = feedback === "incorrect" && isSelected;
+          const shouldDim = selectedOption !== null && !isSelected;
 
           return (
             <button
               key={op.key}
-              onClick={() => onAnswer(op.key)}
+              disabled={selectedOption !== null}
+              onClick={() => selectedOption === null && onAnswer(op.key)}
               className={`option-button
                 ${isCorrect ? "correct-button" : ""}
                 ${isIncorrect ? "incorrect-button" : ""}
+                ${isSelected ? "selected-option" : ""}
+                ${shouldDim ? "dimmed" : ""}
               `}
             >
               <span className="option-text">{op.text}</span>

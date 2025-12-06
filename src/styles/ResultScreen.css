@@ -5,45 +5,78 @@
     text-align: center;
 }
 
+.result-card {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 40px 55px;
+    border-radius: 16px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    min-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .result-title {
     font-size: 2rem;
     font-weight: bold;
-    color: rgba(221, 214, 214, 0.995);
-    margin-bottom: 10px;
+    color: white;
+    margin-bottom: 15px;
 }
 
 .result-text {
     font-size: 1.2rem;
-    color: rgba(221, 214, 214, 0.995);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    font-weight: 600;
 }
 
-.restart-button {
-    padding: 12px 24px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: white;
+.score-red { color: #e53935; }
+.score-orange { color: #fb8c00; }
+.score-yellow { color: #fdd835; }
+.score-green { color: #43a047; }
+
+.fade-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 0;
+    transition: opacity 1.3s ease;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.fade-overlay.active {
+    opacity: 0.9;
+}
+
+.restart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 60;
+}
+
+.restart-big-button {
+    background: #ffca28;
+    color: black;
+    padding: 18px 40px;
+    font-size: 1.7rem;
+    font-weight: 800;
+    border-radius: 18px;
+    box-shadow: 0 5px 0 #c7991f;
     border: none;
-    border-radius: 10px;
     cursor: pointer;
-    animation: colorCycle 3s linear infinite;
-    transition: transform 0.2s ease;
+    transition: transform 0.15s;
 }
 
-.restart-button:hover {
-    transform: scale(1.08);
-}
-
-@keyframes colorCycle {
-    0%   { background-color: #f9d71c; } 
-    16%  { background-color: #f99e1c; } 
-    32%  { background-color: #e43f3f; }
-    48%  { background-color: #cc2dcf; } 
-    64%  { background-color: #3e4ae6; } 
-    80%  { background-color: #2ecc71; } 
-    100% { background-color: #f9d71c; } 
-}
-
-.restart-button:hover {
-    transform: scale(1.05);
+.restart-big-button:hover {
+    transform: scale(1.07);
 }
