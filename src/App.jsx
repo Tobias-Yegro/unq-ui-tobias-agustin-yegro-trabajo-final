@@ -1,35 +1,143 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
+import DifficultySelector from './components/DifficultySelector';
+import QuestionCard from './components/QuestionCard';
+import ResultScreen from "./components/ResultScreen";
+import './styles/App.css';
+import colorBar from "./assets/colorbar.png";
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [difficulties, setDifficulties] = useState([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState(null);
+
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  const [feedback, setFeedback] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [gameFinished, setGameFinished] = useState(false);
+
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchDifficulties()
+      .then((data) => setDifficulties(data))
+      .catch(() => setError('Error al cargar las dificultades'));
+  }, []);
+
+  const handleSelectDifficulty = async (difficulty) => {
+    setSelectedDifficulty(difficulty);
+    setError(null);
+    setGameFinished(false);
+    setFeedback(null);
+    setCorrectCount(0);
+    setCurrentQuestionIndex(0);
+
+    try {
+      const data = await fetchQuestions(difficulty);
+      setQuestions(data);
+    } catch (err) {
+      setError('Error al cargar las preguntas');
+    }
+  };
+
+const handleAnswer = async (optionKey) => {
+  setSelectedOption(optionKey);
+  const question = questions[currentQuestionIndex];
+
+  try {
+    const result = await postAnswer({
+      questionId: question.id,
+      option: optionKey,
+    });
+
+    if (result.answer === true) {
+      setCorrectCount(prev => prev + 1);
+      setFeedback("correct");
+    } else {
+      setFeedback("incorrect");
+      window.dispatchEvent(new Event("shake-screen"));
+    }
+    
+  } catch (err) {
+    console.error(err);
+    setError('Error al enviar la respuesta');
+  }
+};
+
+  const handleNext = () => {
+    const nextIndex = currentQuestionIndex + 1;
+
+    if (nextIndex < questions.length) {
+      setCurrentQuestionIndex(nextIndex);
+      setFeedback(null);
+      setSelectedOption(null);
+    } else {
+      setGameFinished(true);
+    }
+  };
+
+  const handleRestart = () => {
+    setSelectedDifficulty(null);
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setFeedback(null);
+    setSelectedOption(null);
+    setCorrectCount(0);
+    setGameFinished(false);
+    setError(null);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app-page">
+      <div className="side-area"></div>
+
+      <div className="center-area">
+
+        <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
+
+        <div className="content">
+          <h1 className="title">Trivia Crack</h1>
+          <div className="title-divider"></div>
+
+          {error && <p className="error-text">{error}</p>}
+
+          {!selectedDifficulty && (
+            <DifficultySelector
+              difficulties={difficulties}
+              onSelect={handleSelectDifficulty}
+            />
+          )}
+
+          {selectedDifficulty && !gameFinished && questions.length > 0 && (
+            <QuestionCard
+              question={questions[currentQuestionIndex]}
+              currentIndex={currentQuestionIndex}
+              totalQuestions={questions.length}
+              feedback={feedback}
+              selectedOption={selectedOption}
+              onAnswer={handleAnswer}
+              onNext={handleNext}
+            />
+          )}
+
+          {gameFinished && (
+            <ResultScreen
+              correctCount={correctCount}
+              totalQuestions={questions.length}
+              onRestart={handleRestart}
+            />
+          )}
+        </div>
+
+        <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      <div className="side-area"></div>
+    </div>
+  );
 }
 
-export default App
+export default App;
