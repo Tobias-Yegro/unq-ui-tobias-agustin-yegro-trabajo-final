@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-image: url("src/assets/preguntadosbg.jpg");
+  background-image: url("public/preguntadosbg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -21,13 +21,16 @@ body {
 }
 
 .center-area {
-  flex: 0 0 600px;
+  flex: 0 0 700px;
   background-color: rgb(54, 3, 65);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0;
   box-shadow: 0 0 20px rgb(67, 5, 78);
+  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .colorbar {

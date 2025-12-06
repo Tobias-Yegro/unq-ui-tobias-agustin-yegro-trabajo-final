@@ -66,7 +66,6 @@
   font-weight: 600;
 }
 
-
 .correct-button {
   background-color: #4cd964 !important;
   border-color: #2ebf4f !important;
@@ -81,7 +80,6 @@
   60%  { transform: scale(0.85); }
   100% { transform: scale(1); }
 }
-
 
 .correct-button.selected-option {
   background-color: #4cd964 !important;
