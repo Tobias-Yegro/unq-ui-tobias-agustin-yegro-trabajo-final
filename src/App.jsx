@@ -43,29 +43,29 @@ function App() {
     }
   };
 
-const handleAnswer = async (optionKey) => {
-  setSelectedOption(optionKey);
-  const question = questions[currentQuestionIndex];
+  const handleAnswer = async (optionKey) => {
+    setSelectedOption(optionKey);
+    const question = questions[currentQuestionIndex];
 
-  try {
-    const result = await postAnswer({
-      questionId: question.id,
-      option: optionKey,
-    });
+    try {
+      const result = await postAnswer({
+        questionId: question.id,
+        option: optionKey,
+      });
 
-    if (result.answer === true) {
-      setCorrectCount(prev => prev + 1);
-      setFeedback("correct");
-    } else {
-      setFeedback("incorrect");
-      window.dispatchEvent(new Event("shake-screen"));
+      if (result.answer === true) {
+        setCorrectCount(prev => prev + 1);
+        setFeedback("correct");
+      } else {
+        setFeedback("incorrect");
+        window.dispatchEvent(new Event("shake-screen"));
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError('Error al enviar la respuesta');
     }
-    
-  } catch (err) {
-    console.error(err);
-    setError('Error al enviar la respuesta');
-  }
-};
+  };
 
   const handleNext = () => {
     const nextIndex = currentQuestionIndex + 1;
@@ -99,7 +99,9 @@ const handleAnswer = async (optionKey) => {
         <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
 
         <div className="content">
-          <h1 className="title">Trivia Crack</h1>
+          {(!selectedDifficulty || gameFinished) && (
+            <h1 className="title">Trivia Crack</h1>
+          )}
           <div className="title-divider"></div>
 
           {error && <p className="error-text">{error}</p>}
