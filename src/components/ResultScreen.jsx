@@ -4,11 +4,11 @@ import { useWindowSize } from "react-use";
 import "../styles/ResultScreen.css";
 import clickSound from "../assets/sounds/click.mp3";
 import resultSound from "../assets/sounds/resultSound.mp3";
+import { createSound } from "../services/audio/createSound";
 
 function ResultScreen({ correctCount, totalQuestions, onRestart }) {
     const ratio = correctCount / totalQuestions;
 
-    const clickAudio = new Audio(clickSound);
     const musicRef = useRef(null);
 
     const getColorClass = () => {
@@ -25,10 +25,16 @@ function ResultScreen({ correctCount, totalQuestions, onRestart }) {
     const [showRestart, setShowRestart] = useState(false);
 
     useEffect(() => {
-        musicRef.current = new Audio(resultSound);
-        musicRef.current.volume = 0.20;
+        musicRef.current = createSound(resultSound);
         musicRef.current.play().catch(() => {});
-      }, []);
+
+        return () => {
+            if (musicRef.current) {
+                musicRef.current.pause();
+                musicRef.current.currentTime = 0;
+            }
+        };
+    }, []);
 
     useEffect(() => {
         setTimeout(() => setShowConfetti(false), 4000);
@@ -37,8 +43,8 @@ function ResultScreen({ correctCount, totalQuestions, onRestart }) {
     }, []);
 
     const handleRestartClick = () => {
-        clickAudio.currentTime = 0;
-        clickAudio.play();
+        const clickAudio = createSound(clickSound);
+        clickAudio.play().catch(() => {});
         setTimeout(() => onRestart(), 120);
     };
 

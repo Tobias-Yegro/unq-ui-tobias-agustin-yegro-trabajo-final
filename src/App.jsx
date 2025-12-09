@@ -4,11 +4,13 @@ import DifficultySelector from './components/DifficultySelector';
 import QuestionCard from './components/QuestionCard';
 import ResultScreen from "./components/ResultScreen";
 import StartScreen from './components/StartScreen';
+import VolumeSlider from "./components/VolumeSlider";
 
 import './styles/App.css';
 import background from "./assets/preguntadosbg.jpg";
 import colorBar from "./assets/colorbar.png";
 import lobbyMusic from "./assets/sounds/lobbyMusic.mp3";
+import { createSound } from "./services/audio/createSound";
 
 function App() {
   const [showStart, setShowStart] = useState(true);
@@ -30,9 +32,15 @@ function App() {
   const musicRef = useRef(null);
 
   useEffect(() => {
-    musicRef.current = new Audio(lobbyMusic);
+    musicRef.current = createSound(lobbyMusic);
     musicRef.current.loop = true;
-    musicRef.current.volume = 0.35;
+
+    return () => {
+      if (musicRef.current) {
+        musicRef.current.pause();
+        musicRef.current.currentTime = 0;
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -51,9 +59,10 @@ function App() {
     }
   };
 
-
   const handleStart = () => {
-    musicRef.current.play().catch(() => {});
+    if (musicRef.current) {
+      musicRef.current.play().catch(() => {});
+    }
     setIsTransitioning(true);
 
     setTimeout(() => {
@@ -65,8 +74,10 @@ function App() {
   const handleSelectDifficulty = async (difficulty) => {
     setIsTransitioning(true);
 
-    musicRef.current.pause();
-    musicRef.current.currentTime = 0;
+    if (musicRef.current) {
+      musicRef.current.pause();
+      musicRef.current.currentTime = 0;
+    }
 
     setTimeout(async () => {
       setSelectedDifficulty(difficulty);
@@ -97,13 +108,13 @@ function App() {
         option: optionKey,
       });
 
-      if (result.answer === true) {
-        setCorrectCount(prev => prev + 1);
-        setFeedback("correct");
-      } else {
-        setFeedback("incorrect");
-        window.dispatchEvent(new Event("shake-screen"));
-      }
+        if (result.answer === true) {
+          setCorrectCount(prev => prev + 1);
+          setFeedback("correct");
+        } else {
+          setFeedback("incorrect");
+          window.dispatchEvent(new Event("shake-screen"));
+        }
 
     } catch (err) {
       console.error(err);
@@ -134,7 +145,9 @@ function App() {
     setError(null);
 
     setTimeout(() => {
-      musicRef.current.play().catch(() => {});
+      if (musicRef.current) {
+        musicRef.current.play().catch(() => {});
+      }
     }, 200);
   };
 
@@ -149,13 +162,17 @@ function App() {
 
   return (
     <div className="bg-wrapper" style={{ "--bg-image": `url(${background})` }}>
-
       <div className={`transition-overlay ${isTransitioning ? "" : "fade-out"}`} />
 
       <div className="app-page">
         <div className="side-area"></div>
 
         <div className="center-area">
+
+          <div className="volume-in-panel">
+            <VolumeSlider />
+          </div>
+
           <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
 
           <div className="content">

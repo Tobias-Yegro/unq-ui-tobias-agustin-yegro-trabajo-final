@@ -1,11 +1,12 @@
 import "../styles/StartScreen.css";
 import clickSound from "../assets/sounds/click.mp3";
+import { createSound } from "../services/audio/createSound";
 
 function StartScreen({ onPlay }) {
 
     const handlePlay = () => {
-        const audio = new Audio(clickSound);
-        audio.play();
+        const audio = createSound(clickSound);
+        audio.play().catch(() => {});
 
         setTimeout(() => {
             onPlay();

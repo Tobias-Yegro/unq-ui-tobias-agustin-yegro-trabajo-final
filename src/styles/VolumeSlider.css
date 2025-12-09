@@ -1,0 +1,15 @@
+.volume-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-icon {
+  font-size: 20px;
+  color: white;
+}
+
+.volume-slider {
+  width: 110px;
+  accent-color: white;
+}

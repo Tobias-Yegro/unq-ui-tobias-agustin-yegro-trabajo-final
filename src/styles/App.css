@@ -19,7 +19,7 @@ body {
 .app-page {
   display: flex;
   width: 100vw;
-  min-height: 100vh;   
+  min-height: 100vh;
 }
 
 .side-area {
@@ -39,7 +39,7 @@ body {
 }
 
 .center-area {
-  width: min(680px, 90vw); 
+  width: min(680px, 90vw);
   height: 100vh;
   margin: 0 auto;
   background-color: rgb(54, 3, 65);
@@ -49,6 +49,13 @@ body {
   box-shadow: 0 0 20px rgb(67, 5, 78);
   overflow: hidden;
   position: relative;
+}
+
+.volume-in-panel {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 30;
 }
 
 .colorbar {
@@ -72,7 +79,7 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
   padding: 20px;
 }
@@ -118,4 +125,14 @@ html, body {
 
 .transition-overlay.fade-out {
   opacity: 0;
+}
+
+.volume-icon {
+  font-size: 1.3rem;
+}
+
+.volume-slider {
+  width: 90px;
+  accent-color: #ffe066;
+  cursor: pointer;
 }

@@ -2,14 +2,12 @@ import { useRef } from "react";
 import "../styles/DifficultySelector.css";
 import greenWork from "../assets/characters/GreenWork.gif";
 import difficultyClick from "../assets/sounds/click.mp3";
+import { createSound } from "../services/audio/createSound";
 
 function DifficultySelector({ difficulties, onSelect }) {
 
-    const clickSound = useRef(new Audio(difficultyClick));
-
     const handleClick = (difficulty) => {
-        const audio = clickSound.current;
-        audio.currentTime = 0;
+        const audio = createSound(difficultyClick);
         audio.play().catch(() => {});
         onSelect(difficulty);
     };
