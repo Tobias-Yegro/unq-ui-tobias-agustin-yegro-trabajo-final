@@ -4,6 +4,7 @@ import DifficultySelector from './components/DifficultySelector';
 import QuestionCard from './components/QuestionCard';
 import ResultScreen from "./components/ResultScreen";
 import './styles/App.css';
+import background from "./assets/preguntadosbg.jpg";
 import colorBar from "./assets/colorbar.png";
 
 
@@ -26,6 +27,16 @@ function App() {
       .then((data) => setDifficulties(data))
       .catch(() => setError('Error al cargar las dificultades'));
   }, []);
+
+  const getTimerDuration = (difficulty) => {
+    switch (difficulty) {
+      case "easy": return 20000;
+      case "normal": return 17000;
+      case "hard": return 14000;
+      case "extreme": return 10000;
+      default: return 15000;
+    }
+  };
 
   const handleSelectDifficulty = async (difficulty) => {
     setSelectedDifficulty(difficulty);
@@ -91,53 +102,55 @@ function App() {
   }
 
   return (
-    <div className="app-page">
-      <div className="side-area"></div>
+    <div className="bg-wrapper" style={{ "--bg-image": `url(${background})` }}>
+      <div className="app-page">
+        <div className="side-area"></div>
 
-      <div className="center-area">
+        <div className="center-area">
+          <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
 
-        <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
+          <div className="content">
+            {(!selectedDifficulty || gameFinished) && (
+              <h1 className="title">Trivia Crack</h1>
+            )}
+            <div className="title-divider"></div>
 
-        <div className="content">
-          {(!selectedDifficulty || gameFinished) && (
-            <h1 className="title">Trivia Crack</h1>
-          )}
-          <div className="title-divider"></div>
+            {error && <p className="error-text">{error}</p>}
 
-          {error && <p className="error-text">{error}</p>}
+            {!selectedDifficulty && (
+              <DifficultySelector
+                difficulties={difficulties}
+                onSelect={handleSelectDifficulty}
+              />
+            )}
 
-          {!selectedDifficulty && (
-            <DifficultySelector
-              difficulties={difficulties}
-              onSelect={handleSelectDifficulty}
-            />
-          )}
+            {selectedDifficulty && !gameFinished && questions.length > 0 && (
+              <QuestionCard
+                question={questions[currentQuestionIndex]}
+                currentIndex={currentQuestionIndex}
+                totalQuestions={questions.length}
+                feedback={feedback}
+                selectedOption={selectedOption}
+                onAnswer={handleAnswer}
+                onNext={handleNext}
+                timerDuration={getTimerDuration(selectedDifficulty)}
+              />
+            )}
 
-          {selectedDifficulty && !gameFinished && questions.length > 0 && (
-            <QuestionCard
-              question={questions[currentQuestionIndex]}
-              currentIndex={currentQuestionIndex}
-              totalQuestions={questions.length}
-              feedback={feedback}
-              selectedOption={selectedOption}
-              onAnswer={handleAnswer}
-              onNext={handleNext}
-            />
-          )}
+            {gameFinished && (
+              <ResultScreen
+                correctCount={correctCount}
+                totalQuestions={questions.length}
+                onRestart={handleRestart}
+              />
+            )}
+          </div>
 
-          {gameFinished && (
-            <ResultScreen
-              correctCount={correctCount}
-              totalQuestions={questions.length}
-              onRestart={handleRestart}
-            />
-          )}
+          <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
         </div>
 
-        <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
+        <div className="side-area"></div>
       </div>
-
-      <div className="side-area"></div>
     </div>
   );
 }

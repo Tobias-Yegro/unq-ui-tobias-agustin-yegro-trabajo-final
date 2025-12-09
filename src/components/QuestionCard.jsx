@@ -14,9 +14,9 @@ function QuestionCard({
   feedback,
   selectedOption,
   onAnswer,
-  onNext
+  onNext,
+  timerDuration
 }) {
-  const TIMER_DURATION = 15000;
 
   const [shake, setShake] = useState(false);
   const cardRef = useRef(null);
@@ -63,14 +63,16 @@ function QuestionCard({
     if (feedback === "correct") {
       const timeout = setTimeout(() => {
         onNext();
-      }, 550); 
+      }, 550);
 
       return () => clearTimeout(timeout);
     }
   }, [feedback, onNext]);
 
   return (
-    <div ref={cardRef} className={`question-card ${shake ? "shake" : ""}`}>
+    <div ref={cardRef} className={`question-card ${shake ? "shake" : ""}`}
+      style={{ "--timer-duration": `${timerDuration}ms` }}
+    >
 
       <div className="question-box">
         <p className="question-text">{question.text}</p>
@@ -107,7 +109,6 @@ function QuestionCard({
           key={currentIndex}
           ref={timerRef}
           className="timer-fill"
-          style={{ animationDuration: `${TIMER_DURATION}ms` }}
         ></div>
       </div>
 

@@ -123,7 +123,7 @@
   height: 100%;
   background: linear-gradient(90deg, #00ff95, #ffea00, #ff4d4d);
   width: 100%;
-  animation: timerDeplete 15s linear forwards;
+  animation: timerDeplete var(--timer-duration, 15000ms) linear forwards;
 }
 
 @keyframes timerDeplete {
