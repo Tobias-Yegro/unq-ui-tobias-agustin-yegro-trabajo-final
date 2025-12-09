@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
+import { useState, useEffect } from 'react';
+import { fetchQuestions, postAnswer } from './services/api';
+
 import DifficultySelector from './components/DifficultySelector';
 import QuestionCard from './components/QuestionCard';
 import ResultScreen from "./components/ResultScreen";
@@ -10,11 +11,12 @@ import './styles/App.css';
 import background from "./assets/preguntadosbg.jpg";
 import colorBar from "./assets/colorbar.png";
 import lobbyMusic from "./assets/sounds/lobbyMusic.mp3";
-import { createSound } from "./services/audio/createSound";
+
+import { useLobbyMusic } from "./hooks/useLobbyMusic";
+import { useDifficulties } from "./hooks/useDifficulties";
 
 function App() {
   const [showStart, setShowStart] = useState(true);
-  const [difficulties, setDifficulties] = useState([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
 
   const [questions, setQuestions] = useState([]);
@@ -25,29 +27,12 @@ function App() {
   const [correctCount, setCorrectCount] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
 
-  const [error, setError] = useState(null);
+  const [gameError, setGameError] = useState(null);
 
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const musicRef = useRef(null);
-
-  useEffect(() => {
-    musicRef.current = createSound(lobbyMusic);
-    musicRef.current.loop = true;
-
-    return () => {
-      if (musicRef.current) {
-        musicRef.current.pause();
-        musicRef.current.currentTime = 0;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    fetchDifficulties()
-      .then((data) => setDifficulties(data))
-      .catch(() => setError('Error al cargar las dificultades'));
-  }, []);
+  const { play: playLobbyMusic, stop: stopLobbyMusic } = useLobbyMusic(lobbyMusic);
+  const { difficulties, loading: loadingDifficulties, error: difficultyError } = useDifficulties();
 
   const getTimerDuration = (difficulty) => {
     switch (difficulty) {
@@ -60,9 +45,7 @@ function App() {
   };
 
   const handleStart = () => {
-    if (musicRef.current) {
-      musicRef.current.play().catch(() => {});
-    }
+    playLobbyMusic();
     setIsTransitioning(true);
 
     setTimeout(() => {
@@ -73,15 +56,11 @@ function App() {
 
   const handleSelectDifficulty = async (difficulty) => {
     setIsTransitioning(true);
-
-    if (musicRef.current) {
-      musicRef.current.pause();
-      musicRef.current.currentTime = 0;
-    }
+    stopLobbyMusic();
 
     setTimeout(async () => {
       setSelectedDifficulty(difficulty);
-      setError(null);
+      setGameError(null);
       setGameFinished(false);
       setFeedback(null);
       setCorrectCount(0);
@@ -91,7 +70,7 @@ function App() {
         const data = await fetchQuestions(difficulty);
         setQuestions(data);
       } catch (err) {
-        setError('Error al cargar las preguntas');
+        setGameError("Error al cargar las preguntas");
       }
 
       setIsTransitioning(false);
@@ -108,17 +87,17 @@ function App() {
         option: optionKey,
       });
 
-        if (result.answer === true) {
-          setCorrectCount(prev => prev + 1);
-          setFeedback("correct");
-        } else {
-          setFeedback("incorrect");
-          window.dispatchEvent(new Event("shake-screen"));
-        }
+      if (result.answer === true) {
+        setCorrectCount(prev => prev + 1);
+        setFeedback("correct");
+      } else {
+        setFeedback("incorrect");
+        window.dispatchEvent(new Event("shake-screen"));
+      }
 
     } catch (err) {
       console.error(err);
-      setError('Error al enviar la respuesta');
+      setGameError("Error al enviar la respuesta");
     }
   };
 
@@ -142,12 +121,10 @@ function App() {
     setSelectedOption(null);
     setCorrectCount(0);
     setGameFinished(false);
-    setError(null);
+    setGameError(null);
 
     setTimeout(() => {
-      if (musicRef.current) {
-        musicRef.current.play().catch(() => {});
-      }
+      playLobbyMusic();
     }, 200);
   };
 
@@ -181,9 +158,10 @@ function App() {
             )}
             <div className="title-divider"></div>
 
-            {error && <p className="error-text">{error}</p>}
+            {difficultyError && <p className="error-text">{difficultyError}</p>}
+            {gameError && <p className="error-text">{gameError}</p>}
 
-            {!selectedDifficulty && (
+            {!selectedDifficulty && !loadingDifficulties && (
               <DifficultySelector
                 difficulties={difficulties}
                 onSelect={handleSelectDifficulty}
