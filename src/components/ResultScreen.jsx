@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import "../styles/ResultScreen.css";
+import clickSound from "../assets/sounds/click.mp3";
+import resultSound from "../assets/sounds/resultSound.mp3";
 
 function ResultScreen({ correctCount, totalQuestions, onRestart }) {
     const ratio = correctCount / totalQuestions;
+
+    const clickAudio = new Audio(clickSound);
+    const musicRef = useRef(null);
 
     const getColorClass = () => {
         if (ratio < 0.4) return "score-red";
@@ -20,10 +25,22 @@ function ResultScreen({ correctCount, totalQuestions, onRestart }) {
     const [showRestart, setShowRestart] = useState(false);
 
     useEffect(() => {
+        musicRef.current = new Audio(resultSound);
+        musicRef.current.volume = 0.20;
+        musicRef.current.play().catch(() => {});
+      }, []);
+
+    useEffect(() => {
         setTimeout(() => setShowConfetti(false), 4000);
         setTimeout(() => setFadeOut(true), 2500);
         setTimeout(() => setShowRestart(true), 5000);
     }, []);
+
+    const handleRestartClick = () => {
+        clickAudio.currentTime = 0;
+        clickAudio.play();
+        setTimeout(() => onRestart(), 120);
+    };
 
     return (
         <>
@@ -42,7 +59,7 @@ function ResultScreen({ correctCount, totalQuestions, onRestart }) {
 
             {showRestart && (
                 <div className="restart-overlay">
-                    <button onClick={onRestart} className="restart-big-button">
+                    <button onClick={handleRestartClick} className="restart-big-button">
                         PLAY AGAIN
                     </button>
                 </div>

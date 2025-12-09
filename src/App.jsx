@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fetchDifficulties, fetchQuestions, postAnswer } from './services/api';
 import DifficultySelector from './components/DifficultySelector';
 import QuestionCard from './components/QuestionCard';
 import ResultScreen from "./components/ResultScreen";
+import StartScreen from './components/StartScreen';
+
 import './styles/App.css';
 import background from "./assets/preguntadosbg.jpg";
 import colorBar from "./assets/colorbar.png";
-
+import lobbyMusic from "./assets/sounds/lobbyMusic.mp3";
 
 function App() {
+  const [showStart, setShowStart] = useState(true);
   const [difficulties, setDifficulties] = useState([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
 
@@ -21,6 +24,16 @@ function App() {
   const [gameFinished, setGameFinished] = useState(false);
 
   const [error, setError] = useState(null);
+
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const musicRef = useRef(null);
+
+  useEffect(() => {
+    musicRef.current = new Audio(lobbyMusic);
+    musicRef.current.loop = true;
+    musicRef.current.volume = 0.35;
+  }, []);
 
   useEffect(() => {
     fetchDifficulties()
@@ -38,20 +51,40 @@ function App() {
     }
   };
 
-  const handleSelectDifficulty = async (difficulty) => {
-    setSelectedDifficulty(difficulty);
-    setError(null);
-    setGameFinished(false);
-    setFeedback(null);
-    setCorrectCount(0);
-    setCurrentQuestionIndex(0);
 
-    try {
-      const data = await fetchQuestions(difficulty);
-      setQuestions(data);
-    } catch (err) {
-      setError('Error al cargar las preguntas');
-    }
+  const handleStart = () => {
+    musicRef.current.play().catch(() => {});
+    setIsTransitioning(true);
+
+    setTimeout(() => {
+      setShowStart(false);
+      setIsTransitioning(false);
+    }, 400);
+  };
+
+  const handleSelectDifficulty = async (difficulty) => {
+    setIsTransitioning(true);
+
+    musicRef.current.pause();
+    musicRef.current.currentTime = 0;
+
+    setTimeout(async () => {
+      setSelectedDifficulty(difficulty);
+      setError(null);
+      setGameFinished(false);
+      setFeedback(null);
+      setCorrectCount(0);
+      setCurrentQuestionIndex(0);
+
+      try {
+        const data = await fetchQuestions(difficulty);
+        setQuestions(data);
+      } catch (err) {
+        setError('Error al cargar las preguntas');
+      }
+
+      setIsTransitioning(false);
+    }, 500);
   };
 
   const handleAnswer = async (optionKey) => {
@@ -99,10 +132,26 @@ function App() {
     setCorrectCount(0);
     setGameFinished(false);
     setError(null);
+
+    setTimeout(() => {
+      musicRef.current.play().catch(() => {});
+    }, 200);
+  };
+
+  if (showStart) {
+    return (
+      <div className="bg-wrapper" style={{ "--bg-image": `url(${background})` }}>
+        <div className={`transition-overlay ${isTransitioning ? "" : "fade-out"}`} />
+        <StartScreen onPlay={handleStart} />
+      </div>
+    );
   }
 
   return (
     <div className="bg-wrapper" style={{ "--bg-image": `url(${background})` }}>
+
+      <div className={`transition-overlay ${isTransitioning ? "" : "fade-out"}`} />
+
       <div className="app-page">
         <div className="side-area"></div>
 

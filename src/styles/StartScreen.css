@@ -1,0 +1,25 @@
+.start-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.88);
+}
+
+.start-button {
+  background: #ffca28;
+  color: black;
+  padding: 18px 40px;
+  font-size: 1.7rem;
+  font-weight: 800;
+  border-radius: 18px;
+  box-shadow: 0 5px 0 #c7991f;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.start-button:hover {
+  transform: scale(1.07);
+}
