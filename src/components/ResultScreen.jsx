@@ -26,7 +26,7 @@ function ResultScreen({ correctCount, totalQuestions, onRestart }) {
     };
 
     useEffect(() => {
-        playMusic(resultSound, { loop: false });
+        playMusic(resultSound, false);
 
         return () => {
             stopMusic();
