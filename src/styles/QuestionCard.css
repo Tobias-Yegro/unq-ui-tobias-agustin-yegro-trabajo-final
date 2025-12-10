@@ -10,7 +10,7 @@
 }
 
 .QC-card.QC-shake {
-  animation: QC-shakeAnim 0.5s ease;
+  animation: QC-shakeAnim 1.9s ease;
 }
 
 @keyframes QC-shakeAnim {

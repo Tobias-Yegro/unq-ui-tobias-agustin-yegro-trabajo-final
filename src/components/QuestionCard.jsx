@@ -4,6 +4,9 @@ import green from "../assets/characters/green.png";
 import pink from "../assets/characters/pink.png";
 import red from "../assets/characters/red.png";
 import yellow from "../assets/characters/yellow.png";
+import correctSound from "../assets/sounds/correctAnswer.mp3";
+import wrongSound from "../assets/sounds/wrongAnswer.mp3";
+import { useAudio } from "../context/AudioContext";
 
 const optionIcons = [green, pink, red, yellow];
 
@@ -21,6 +24,15 @@ function QuestionCard({
   const [shake, setShake] = useState(false);
   const cardRef = useRef(null);
   const timerRef = useRef(null);
+  const { playSound } = useAudio();
+
+  useEffect(() => {
+    if (feedback === "correct") {
+      playSound(correctSound);
+    } else if (feedback === "incorrect") {
+      playSound(wrongSound);
+    }
+  }, [feedback, playSound]);
 
   useEffect(() => {
     const triggerShake = () => setShake(true);
@@ -61,7 +73,7 @@ function QuestionCard({
     if (feedback === "correct") {
       const timeout = setTimeout(() => {
         onNext();
-      }, 550);
+      }, 1900);
       return () => clearTimeout(timeout);
     }
   }, [feedback, onNext]);
