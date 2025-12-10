@@ -1,27 +1,26 @@
-import { useRef } from "react";
 import "../styles/DifficultySelector.css";
 import greenWork from "../assets/characters/GreenWork.gif";
 import difficultyClick from "../assets/sounds/click.mp3";
-import { createSound } from "../services/audio/createSound";
+import { useAudio } from "../context/AudioContext";
 
 function DifficultySelector({ difficulties, onSelect }) {
+    const { playSound } = useAudio();
 
     const handleClick = (difficulty) => {
-        const audio = createSound(difficultyClick);
-        audio.play().catch(() => {});
+        playSound(difficultyClick);
         onSelect(difficulty);
     };
 
     return (
-        <div className="difficulty-container">
-            <h2 className="subtitle">Choose a difficulty:</h2>
+        <div className="DS-container">
+            <h2 className="DS-subtitle">Choose a difficulty:</h2>
 
-            <div className="difficulty-buttons">
+            <div className="DS-buttons">
                 {difficulties.map((difficulty) => (
                     <button
                         key={difficulty}
                         onClick={() => handleClick(difficulty)}
-                        className={`difficulty-button difficulty-${difficulty}`}
+                        className={`DS-button DS-${difficulty}`}
                     >
                         {difficulty}
                     </button>
@@ -29,9 +28,9 @@ function DifficultySelector({ difficulties, onSelect }) {
             </div>
 
             <img 
-              src={greenWork} 
-              alt="character animation" 
-              className="difficulty-character"
+                src={greenWork} 
+                alt="character animation" 
+                className="DS-character"
             />
         </div>
     );

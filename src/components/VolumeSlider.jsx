@@ -1,12 +1,7 @@
-import { useState, useEffect } from "react";
-import { audioConfig, setGlobalVolume } from "../services/audio/audioConfig";
+import { useAudio } from "../context/AudioContext";
 
 export default function VolumeSlider() {
-  const [volume, setVolume] = useState(audioConfig.volume);
-
-  useEffect(() => {
-    setGlobalVolume(volume);
-  }, [volume]);
+  const { volume, setVolume } = useAudio();
 
   const getIcon = () => {
     if (volume === 0) return "🔇";

@@ -1,19 +1,21 @@
-import { useState, useEffect } from 'react';
-import { fetchQuestions, postAnswer } from './services/api';
+import { useState } from "react";
 
-import DifficultySelector from './components/DifficultySelector';
-import QuestionCard from './components/QuestionCard';
+import { useAudio } from "./context/AudioContext";
+import { useDifficulties } from "./hooks/useDifficulties";
+import { useTransition } from "./hooks/useTransition";
+
+import { fetchQuestions, postAnswer } from "./services/api";
+
+import DifficultySelector from "./components/DifficultySelector";
+import QuestionCard from "./components/QuestionCard";
 import ResultScreen from "./components/ResultScreen";
-import StartScreen from './components/StartScreen';
+import StartScreen from "./components/StartScreen";
 import VolumeSlider from "./components/VolumeSlider";
 
-import './styles/App.css';
+import "./styles/App.css";
 import background from "./assets/preguntadosbg.jpg";
 import colorBar from "./assets/colorbar.png";
 import lobbyMusic from "./assets/sounds/lobbyMusic.mp3";
-
-import { useLobbyMusic } from "./hooks/useLobbyMusic";
-import { useDifficulties } from "./hooks/useDifficulties";
 
 function App() {
   const [showStart, setShowStart] = useState(true);
@@ -29,10 +31,10 @@ function App() {
 
   const [gameError, setGameError] = useState(null);
 
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const { play: playLobbyMusic, stop: stopLobbyMusic } = useLobbyMusic(lobbyMusic);
+  const { playMusic, stopMusic } = useAudio();
   const { difficulties, loading: loadingDifficulties, error: difficultyError } = useDifficulties();
+
+  const { transitioning, startTransition } = useTransition(400);
 
   const getTimerDuration = (difficulty) => {
     switch (difficulty) {
@@ -45,20 +47,14 @@ function App() {
   };
 
   const handleStart = () => {
-    playLobbyMusic();
-    setIsTransitioning(true);
-
-    setTimeout(() => {
-      setShowStart(false);
-      setIsTransitioning(false);
-    }, 400);
+    playMusic(lobbyMusic);
+    startTransition(() => setShowStart(false), 1000);
   };
 
-  const handleSelectDifficulty = async (difficulty) => {
-    setIsTransitioning(true);
-    stopLobbyMusic();
+  const handleSelectDifficulty = (difficulty) => {
+    stopMusic();
 
-    setTimeout(async () => {
+    startTransition(async () => {
       setSelectedDifficulty(difficulty);
       setGameError(null);
       setGameFinished(false);
@@ -69,12 +65,10 @@ function App() {
       try {
         const data = await fetchQuestions(difficulty);
         setQuestions(data);
-      } catch (err) {
+      } catch {
         setGameError("Error al cargar las preguntas");
       }
-
-      setIsTransitioning(false);
-    }, 500);
+    }, 1000);
   };
 
   const handleAnswer = async (optionKey) => {
@@ -88,15 +82,13 @@ function App() {
       });
 
       if (result.answer === true) {
-        setCorrectCount(prev => prev + 1);
+        setCorrectCount((prev) => prev + 1);
         setFeedback("correct");
       } else {
         setFeedback("incorrect");
         window.dispatchEvent(new Event("shake-screen"));
       }
-
-    } catch (err) {
-      console.error(err);
+    } catch {
       setGameError("Error al enviar la respuesta");
     }
   };
@@ -124,14 +116,19 @@ function App() {
     setGameError(null);
 
     setTimeout(() => {
-      playLobbyMusic();
+      playMusic(lobbyMusic);
     }, 200);
   };
+
+  const globalError = difficultyError || gameError;
 
   if (showStart) {
     return (
       <div className="bg-wrapper" style={{ "--bg-image": `url(${background})` }}>
-        <div className={`transition-overlay ${isTransitioning ? "" : "fade-out"}`} />
+        <div
+          className={`transition-overlay ${transitioning ? "" : "fade-out"}`}
+          style={{ "--transition-duration": "800ms" }}
+        />
         <StartScreen onPlay={handleStart} />
       </div>
     );
@@ -139,27 +136,29 @@ function App() {
 
   return (
     <div className="bg-wrapper" style={{ "--bg-image": `url(${background})` }}>
-      <div className={`transition-overlay ${isTransitioning ? "" : "fade-out"}`} />
+      <div
+        className={`transition-overlay ${transitioning ? "" : "fade-out"}`}
+        style={{ "--transition-duration": "800ms" }}
+      />
 
       <div className="app-page">
         <div className="side-area"></div>
 
         <div className="center-area">
-
           <div className="volume-in-panel">
             <VolumeSlider />
           </div>
 
-          <img src={colorBar} className="colorbar top-bar" alt="color bar top" />
+          <img src={colorBar} className="colorbar top-bar" alt="top" />
 
           <div className="content">
             {(!selectedDifficulty || gameFinished) && (
               <h1 className="title">Trivia Crack</h1>
             )}
+
             <div className="title-divider"></div>
 
-            {difficultyError && <p className="error-text">{difficultyError}</p>}
-            {gameError && <p className="error-text">{gameError}</p>}
+            {globalError && <p className="error-text">{globalError}</p>}
 
             {!selectedDifficulty && !loadingDifficulties && (
               <DifficultySelector
@@ -190,7 +189,7 @@ function App() {
             )}
           </div>
 
-          <img src={colorBar} className="colorbar bottom-bar" alt="color bar bottom" />
+          <img src={colorBar} className="colorbar bottom-bar" alt="bottom" />
         </div>
 
         <div className="side-area"></div>

@@ -49,9 +49,7 @@ function QuestionCard({
     if (!bar) return;
 
     const handleTimerEnd = () => {
-      if (selectedOption === null) {
-        setShake(true);
-      }
+      if (selectedOption === null) setShake(true);
     };
 
     bar.addEventListener("animationend", handleTimerEnd);
@@ -64,21 +62,22 @@ function QuestionCard({
       const timeout = setTimeout(() => {
         onNext();
       }, 550);
-
       return () => clearTimeout(timeout);
     }
   }, [feedback, onNext]);
 
   return (
-    <div ref={cardRef} className={`question-card ${shake ? "shake" : ""}`}
+    <div
+      ref={cardRef}
+      className={`QC-card ${shake ? "QC-shake" : ""}`}
       style={{ "--timer-duration": `${timerDuration}ms` }}
     >
 
-      <div className="question-box">
-        <p className="question-text">{question.text}</p>
+      <div className="QC-box">
+        <p className="QC-text">{question.text}</p>
       </div>
 
-      <div className="options-container">
+      <div className="QC-options">
         {question.options.map((op, index) => {
           const isSelected = selectedOption === op.key;
           const isCorrect = feedback === "correct" && isSelected;
@@ -90,30 +89,31 @@ function QuestionCard({
               key={op.key}
               disabled={selectedOption !== null}
               onClick={() => selectedOption === null && onAnswer(op.key)}
-              className={`option-button
-                ${isCorrect ? "correct-button" : ""}
-                ${isIncorrect ? "incorrect-button" : ""}
-                ${isSelected ? "selected-option" : ""}
-                ${shouldDim ? "dimmed" : ""}
+              className={`
+                QC-option
+                ${isSelected ? "QC-selected" : ""}
+                ${isCorrect ? "QC-correct" : ""}
+                ${isIncorrect ? "QC-incorrect" : ""}
+                ${shouldDim ? "QC-dimmed" : ""}
               `}
             >
-              <span className="option-text">{op.text}</span>
-              <img src={optionIcons[index]} className="option-icon" />
+              <span className="QC-optionText">{op.text}</span>
+              <img src={optionIcons[index]} className="QC-icon" />
             </button>
           );
         })}
       </div>
 
-      <div className="timer-bar">
+      <div className="QC-timerBar">
         <div
           key={currentIndex}
           ref={timerRef}
-          className="timer-fill"
+          className="QC-timerFill"
         ></div>
       </div>
 
-      <div className="counter-wrapper">
-        <div className="question-counter">
+      <div className="QC-counterWrapper">
+        <div className="QC-counter">
           {currentIndex + 1}/{totalQuestions}
         </div>
       </div>

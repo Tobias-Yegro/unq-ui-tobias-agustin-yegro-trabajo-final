@@ -1,94 +1,69 @@
-.difficulty-container {
+.DS-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 25px 30px;
-  border-radius: 16px;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-}
 
-.difficulty-container {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-  max-height: 420px;
   padding: clamp(15px, 3vh, 25px);
-  margin-top: clamp(10px, 4vh, 25px);
-  margin-bottom: clamp(20px, 5vh, 40px);
+  margin: clamp(10px, 4vh, 25px) auto;
+
+  max-width: 420px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+
+  opacity: 0;
+  transform: translateY(12px);
+  animation: DS-fadeUp 0.5s ease forwards 0.25s;
 }
 
-.difficulty-container {
-    animation: fadeUp 0.5s ease;
+@keyframes DS-fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.difficulty-buttons {
-  display: flex;
-  gap: clamp(6px, 1vw, 12px);
-  margin-top: 10px;
-}
-
-.difficulty-button {
-  padding: clamp(6px, 1.5vh, 10px) clamp(12px, 2vw, 16px);
-  cursor: pointer;
-  border: 1px solid #333;
-  border-radius: 8px;
-  background-color: #f3f3f3;
-  font-size: clamp(0.9rem, 2vh, 1.1rem);
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  color: #000 !important;
-}
-
-.difficulty-button:hover {
-  background-color: #e8e8e8;
-  transform: scale(1.05);
-}
-
-.subtitle {
+.DS-subtitle {
   font-size: clamp(1.2rem, 2.5vh, 1.6rem);
   font-weight: 600;
   color: rgba(221, 214, 214, 0.995);
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
-.difficulty-easy {
-  background-color: #4caf50; 
+.DS-buttons {
+  display: flex;
+  gap: clamp(6px, 1vw, 12px);
+  margin-top: 8px;
 }
 
-.difficulty-normal {
-  background-color: #ffeb3b;
+.DS-button {
+  padding: clamp(6px, 1.5vh, 10px) clamp(12px, 2vw, 16px);
+  font-size: clamp(0.9rem, 2vh, 1.1rem);
+  border: 1px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #f3f3f3;
+  color: #000;
+  transition: transform 0.12s ease, background-color 0.2s ease;
 }
 
-.difficulty-hard {
-  background-color: #ff9800; 
+.DS-button:hover {
+  background-color: #dedede;
+  transform: scale(1.05);
 }
 
-.difficulty-extreme {
-  background-color: #f44336; 
-}
+.DS-easy    { background-color: #4caf50; }
+.DS-normal  { background-color: #ffeb3b; }
+.DS-hard    { background-color: #ff9800; }
+.DS-extreme { background-color: #f44336; }
 
-.difficulty-character {
+.DS-character {
   width: 100px;
   margin-top: 18px;
   opacity: 0.9;
-  pointer-events: none;
-}
-
-.fade-out {
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 0.3s ease, transform 0.3s ease;
   pointer-events: none;
 }

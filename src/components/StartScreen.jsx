@@ -1,16 +1,16 @@
 import "../styles/StartScreen.css";
 import clickSound from "../assets/sounds/click.mp3";
-import { createSound } from "../services/audio/createSound";
+import { useTransition } from "../hooks/useTransition";
+import { useAudio } from "../context/AudioContext";
 
 function StartScreen({ onPlay }) {
+    const { startTransition } = useTransition();
+    const { playSound } = useAudio();
 
     const handlePlay = () => {
-        const audio = createSound(clickSound);
-        audio.play().catch(() => {});
+        playSound(clickSound);
 
-        setTimeout(() => {
-            onPlay();
-        }, 200);
+        startTransition(onPlay, 200);
     };
 
     return (
