@@ -1,7 +1,7 @@
 import { useAudio } from "../context/AudioContext";
 
 export default function VolumeSlider() {
-  const { volume, setVolume } = useAudio();
+  const { volume, setVolume, sfxPlaying } = useAudio();
 
   const getIcon = () => {
     if (volume === 0) return "🔇";
@@ -20,8 +20,13 @@ export default function VolumeSlider() {
         max="1"
         step="0.01"
         value={volume}
+        disabled={sfxPlaying}
         onChange={(e) => setVolume(Number(e.target.value))}
         className="volume-slider"
+        style={{
+          opacity: sfxPlaying ? 0.5 : 1,
+          cursor: sfxPlaying ? "not-allowed" : "pointer",
+        }}
       />
     </div>
   );

@@ -4,25 +4,36 @@ const AudioContext = createContext();
 
 export function AudioProvider({ children }) {
   const [volume, setVolume] = useState(1);
+  const [sfxPlaying, setSfxPlaying] = useState(false);
+
   const musicRef = useRef(null);
+  const sfxRef = useRef(null);
 
   useEffect(() => {
-    if (musicRef.current) {
-      musicRef.current.volume = volume;
-    }
+    if (musicRef.current) musicRef.current.volume = volume;
+    if (sfxRef.current) sfxRef.current.volume = volume;
   }, [volume]);
 
   const playSound = useCallback(
     (src) => {
       const audio = new Audio(src);
       audio.volume = volume;
+      sfxRef.current = audio;
+
+      setSfxPlaying(true);
+
+      audio.onended = () => {
+        setSfxPlaying(false);
+        sfxRef.current = null;
+      };
+
       audio.play().catch(() => {});
     },
     [volume]
   );
 
   const playMusic = useCallback(
-    (src, { loop = true } = {}) => {
+    (src, loop = true) => {
       if (musicRef.current) {
         musicRef.current.pause();
         musicRef.current.currentTime = 0;
@@ -33,7 +44,6 @@ export function AudioProvider({ children }) {
       audio.loop = loop;
 
       musicRef.current = audio;
-
       audio.play().catch(() => {});
     },
     [volume]
@@ -54,6 +64,7 @@ export function AudioProvider({ children }) {
         playSound,
         playMusic,
         stopMusic,
+        sfxPlaying,
       }}
     >
       {children}
